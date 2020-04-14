@@ -3,6 +3,7 @@ package simpledb.file;
 import simpledb.server.SimpleDB;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Date;
 
 /**
  * The contents of a disk block in memory.
@@ -43,13 +44,27 @@ public class Page {
     * A more realistic value would be 4K.
     */
    public static final int BLOCK_SIZE = 400;
-   
+
+   /**
+    * The size of an boolean in bytes.
+    * This value is almost certainly 4, but it is
+    * a good idea to encode this value as a constant.
+    */
+   public static final int BOOLEAN_SIZE = 1;
+
    /**
     * The size of an integer in bytes.
     * This value is almost certainly 4, but it is
     * a good idea to encode this value as a constant. 
     */
    public static final int INT_SIZE = Integer.SIZE / Byte.SIZE;
+
+   /**
+    * The size of an long in bytes.
+    * This value is almost certainly 8, but it is
+    * a good idea to encode this value as a constant.
+    */
+   public static final int LONG_SIZE = Long.SIZE / Byte.SIZE;
    
    /**
     * The maximum size, in bytes, of a string of length n.
@@ -107,6 +122,30 @@ public class Page {
    public synchronized Block append(String filename) {
       return filemgr.append(filename, contents);
    }
+
+   /**
+    * Returns the boolean value at a specified offset of the page.
+    * @param offset the byte offset within the page
+    * @return the integer value at that offset
+    */
+   public synchronized boolean getBoolean(int offset) {
+      contents.position(offset);
+      return contents.get() != 0;
+   }
+
+   /**
+    * Writes an boolean to the specified offset on the page.
+    * @param offset the byte offset within the page
+    * @param val the boolean to be written to the page
+    */
+   public synchronized void setBoolean(int offset, boolean val) {
+      // the byte value of 'val' is fixed and equals to BOOLEAN_SIZE since it is an boolean
+      // offset must not exceed BLOCK_SIZE - BOOLEAN_SIZE which is (400 - 1) = 399
+      if(offset < 0 || offset > BLOCK_SIZE - BOOLEAN_SIZE)
+         throw new IllegalArgumentException("Given value does not fit into buffer!");
+      contents.position(offset);
+      contents.put((byte) (val ? 1 : 0));
+   }
    
    /**
     * Returns the integer value at a specified offset of the page.
@@ -126,6 +165,10 @@ public class Page {
     * @param val the integer to be written to the page
     */
    public synchronized void setInt(int offset, int val) {
+      // the byte value of 'val' is fixed and equals to INT_SIZE since it is an integer
+      // offset must not exceed BLOCK_SIZE - INT_SIZE which is (400 - 4) = 396
+      if(offset < 0 || offset > BLOCK_SIZE - INT_SIZE)
+         throw new IllegalArgumentException("Given value does not fit into buffer!");
       contents.position(offset);
       contents.putInt(val);
    }
@@ -151,9 +194,37 @@ public class Page {
     * @param val the string to be written to the page
     */
    public synchronized void setString(int offset, String val) {
-      contents.position(offset);
+      // offset must be below of, byte value of an integer + length of val
+      // since we store string as; 1 integer for length of string + consecutively string itself => (byteval.length + INT_SIZE)
       byte[] byteval = val.getBytes();
+      if(offset < 0 || offset > BLOCK_SIZE - (byteval.length + INT_SIZE))
+         throw new IllegalArgumentException("Given value does not fit into buffer!");
+      contents.position(offset);
       contents.putInt(byteval.length);
       contents.put(byteval);
+   }
+
+   /**
+    * Returns the boolean value at a specified offset of the page.
+    * @param offset the byte offset within the page
+    * @return the integer value at that offset
+    */
+   public synchronized Date getDate(int offset) {
+      contents.position(offset);
+      return new Date(contents.getLong());
+   }
+
+   /**
+    * Writes an boolean to the specified offset on the page.
+    * @param offset the byte offset within the page
+    * @param val the boolean to be written to the page
+    */
+   public synchronized void setDate(int offset, Date val) {
+      // the byte value of 'val' is fixed and equals to LONG_SIZE since it is an Date and includes epoch timestamp
+      // offset must not exceed BLOCK_SIZE - LONG_SIZE which is usually (400 - 8) = 392
+      if(offset < 0 || offset > BLOCK_SIZE - LONG_SIZE)
+         throw new IllegalArgumentException("Given value does not fit into buffer!");
+      contents.position(offset);
+      contents.putLong(val.getTime());
    }
 }
