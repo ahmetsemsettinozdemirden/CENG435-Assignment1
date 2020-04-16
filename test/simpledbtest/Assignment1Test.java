@@ -1,4 +1,4 @@
-package simpledb;
+package simpledbtest;
 
 import org.junit.jupiter.api.Test;
 import simpledb.file.Block;
