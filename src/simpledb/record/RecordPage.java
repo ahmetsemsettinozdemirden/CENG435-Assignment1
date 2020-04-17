@@ -1,6 +1,6 @@
 package simpledb.record;
 
-import static simpledb.file.Page.*;
+import static simpledb.file.UpdatedPage.*;
 import simpledb.file.Block;
 import simpledb.tx.Transaction;
 

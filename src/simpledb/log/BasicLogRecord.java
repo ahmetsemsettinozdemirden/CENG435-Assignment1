@@ -1,7 +1,7 @@
 package simpledb.log;
 
-import static simpledb.file.Page.*;
-import simpledb.file.Page;
+import static simpledb.file.UpdatedPage.*;
+import simpledb.file.UpdatedPage;
 
 /**
  * A class that provides the ability to read the values of
@@ -15,7 +15,7 @@ import simpledb.file.Page;
  * @author Edward Sciore
  */
 public class BasicLogRecord {
-   private Page pg;
+   private UpdatedPage pg;
    private int pos;
    
    /**
@@ -25,7 +25,7 @@ public class BasicLogRecord {
     * @param pg the page containing the log record
     * @param pos the position of the log record 
     */
-   public BasicLogRecord(Page pg, int pos) {
+   public BasicLogRecord(UpdatedPage pg, int pos) {
       this.pg = pg;
       this.pos = pos;
    }

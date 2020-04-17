@@ -1,3 +1,8 @@
+/*
+ * Mehmet Arda Aksoydan - 230201029
+ * Ahmet Þemsettin Özdemirden - 230201043
+ */
+
 package simpledb.file;
 
 import simpledb.server.SimpleDB;
@@ -36,7 +41,7 @@ import java.util.Date;
  * </pre>
  * @author Edward Sciore
  */
-public class Page {
+public class UpdatedPage {
    /**
     * The number of bytes in a block.
     * This value is set unreasonably low, so that it is easier
@@ -96,7 +101,7 @@ public class Page {
     * {@link simpledb.server.SimpleDB#initFileLogAndBufferMgr(String)}
     * is called first.
     */
-   public Page() {}
+   public UpdatedPage() {}
    
    /**
     * Populates the page with the contents of the specified disk block. 

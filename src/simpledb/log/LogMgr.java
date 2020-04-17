@@ -2,7 +2,7 @@ package simpledb.log;
 
 import simpledb.server.SimpleDB;
 import simpledb.file.*;
-import static simpledb.file.Page.*;
+import static simpledb.file.UpdatedPage.*;
 import java.util.*;
 
 /**
@@ -23,7 +23,7 @@ public class LogMgr implements Iterable<BasicLogRecord> {
    public static final int LAST_POS = 0;
 
    private String logfile;
-   private Page mypage = new Page();
+   private UpdatedPage mypage = new UpdatedPage();
    private Block currentblk;
    private int currentpos;
 

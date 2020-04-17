@@ -14,7 +14,7 @@ import simpledb.file.*;
  * @author Edward Sciore
  */
 public class Buffer {
-   private Page contents = new Page();
+   private UpdatedPage contents = new UpdatedPage();
    private Block blk = null;
    private int pins = 0;
    private int modifiedBy = -1;  // negative means not modified
@@ -22,7 +22,7 @@ public class Buffer {
 
    /**
     * Creates a new buffer, wrapping a new 
-    * {@link simpledb.file.Page page}.  
+    * {@link simpledb.file.UpdatedPage page}.  
     * This constructor is called exclusively by the 
     * class {@link BasicBufferMgr}.   
     * It depends on  the 

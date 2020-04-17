@@ -1,8 +1,8 @@
 package simpledb.index.btree;
 
-import static simpledb.file.Page.*;
+import static simpledb.file.UpdatedPage.*;
 import static java.sql.Types.INTEGER;
-import simpledb.file.Page;
+import simpledb.file.UpdatedPage;
 import simpledb.buffer.PageFormatter;
 import simpledb.record.TableInfo;
 
@@ -33,9 +33,9 @@ public class BTPageFormatter implements PageFormatter {
     * each string field is given a value of "".
     * The location that indicates the number of records
     * in the page is also set to 0.
-    * @see simpledb.buffer.PageFormatter#format(simpledb.file.Page)
+    * @see simpledb.buffer.PageFormatter#format(simpledb.file.UpdatedPage)
     */
-   public void format(Page page) {
+   public void format(UpdatedPage page) {
       page.setInt(0, flag);
       page.setInt(INT_SIZE, 0);  // #records = 0
       int recsize = ti.recordLength();
@@ -43,7 +43,7 @@ public class BTPageFormatter implements PageFormatter {
          makeDefaultRecord(page, pos);
    }
    
-   private void makeDefaultRecord(Page page, int pos) {
+   private void makeDefaultRecord(UpdatedPage page, int pos) {
       for (String fldname : ti.schema().fields()) {
          int offset = ti.offset(fldname);
          if (ti.schema().type(fldname) == INTEGER)
