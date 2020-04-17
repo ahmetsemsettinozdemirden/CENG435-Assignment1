@@ -4,7 +4,7 @@ package simpledb.file;
  * A reference to a disk block.
  * A Block object consists of a filename and a block number.
  * It does not hold the contents of the block;
- * instead, that is the job of a {@link Page} object.
+ * instead, that is the job of a {@link UpdatedPage} object.
  * @author Edward Sciore
  */
 public class Block {

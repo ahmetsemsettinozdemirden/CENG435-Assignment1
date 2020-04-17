@@ -1,9 +1,9 @@
 package simpledb.record;
 
 import static java.sql.Types.INTEGER;
-import static simpledb.file.Page.*;
+import static simpledb.file.UpdatedPage.*;
 import static simpledb.record.RecordPage.EMPTY;
-import simpledb.file.Page;
+import simpledb.file.UpdatedPage;
 import simpledb.buffer.PageFormatter;
 
 /**
@@ -28,9 +28,9 @@ class RecordFormatter implements PageFormatter {
     * Each record slot is assigned a flag of EMPTY.
     * Each integer field is given a value of 0, and
     * each string field is given a value of "".
-    * @see simpledb.buffer.PageFormatter#format(simpledb.file.Page)
+    * @see simpledb.buffer.PageFormatter#format(simpledb.file.UpdatedPage)
     */
-   public void format(Page page) {
+   public void format(UpdatedPage page) {
       int recsize = ti.recordLength() + INT_SIZE;
       for (int pos=0; pos+recsize<=BLOCK_SIZE; pos += recsize) {
          page.setInt(pos, EMPTY);
@@ -38,7 +38,7 @@ class RecordFormatter implements PageFormatter {
       }
    }
    
-   private void makeDefaultRecord(Page page, int pos) {
+   private void makeDefaultRecord(UpdatedPage page, int pos) {
       for (String fldname : ti.schema().fields()) {
          int offset = ti.offset(fldname);
          if (ti.schema().type(fldname) == INTEGER)

@@ -1,8 +1,13 @@
+/*
+ * Mehmet Arda Aksoydan - 230201029
+ * Ahmet Þemsettin Özdemirden - 230201043
+ */
+
 package simpledb;
 
 import org.junit.jupiter.api.Test;
 import simpledb.file.Block;
-import simpledb.file.Page;
+import simpledb.file.UpdatedPage;
 import simpledb.server.SimpleDB;
 
 import java.util.Date;
@@ -21,7 +26,7 @@ public class Assignment1Test {
         // test if setInt gives error after offset 396 (BLOCK_SIZE - INT_SIZE)
         int someIntegerValue = 123;
         int offset = 0;
-        Page p1 = new Page();
+        UpdatedPage p1 = new UpdatedPage();
         p1.read(blk);
 
         // When
@@ -41,7 +46,7 @@ public class Assignment1Test {
         // test if setInt gives error after offset 396 (BLOCK_SIZE - INT_SIZE)
         int someIntegerValue = 123;
         int offset = 397;
-        Page p1 = new Page();
+        UpdatedPage p1 = new UpdatedPage();
         p1.read(blk);
 
         // When
@@ -61,7 +66,7 @@ public class Assignment1Test {
         // test if setString gives error after offset 392 (INT_SIZE(4bytes) + value(4bytes))
         String fourByteString = "1234";
         int offset = 0;
-        Page p1 = new Page();
+        UpdatedPage p1 = new UpdatedPage();
         p1.read(blk);
 
         // When
@@ -81,7 +86,7 @@ public class Assignment1Test {
         // test if setString gives error after offset 392 (INT_SIZE(4bytes) + value(4bytes))
         String fourByteString = "1234";
         int offset = 393;
-        Page p1 = new Page();
+        UpdatedPage p1 = new UpdatedPage();
         p1.read(blk);
 
         // When
@@ -102,7 +107,7 @@ public class Assignment1Test {
         // test if setInt gives error after offset 396 (BLOCK_SIZE - INT_SIZE)
         boolean someBooleanValue = true;
         int offset = 0;
-        Page p1 = new Page();
+        UpdatedPage p1 = new UpdatedPage();
         p1.read(blk);
 
         // When
@@ -122,7 +127,7 @@ public class Assignment1Test {
         // test if setInt gives error after offset 396 (BLOCK_SIZE - INT_SIZE)
         boolean someBooleanValue = true;
         int offset = 400;
-        Page p1 = new Page();
+        UpdatedPage p1 = new UpdatedPage();
         p1.read(blk);
 
         // When
@@ -142,7 +147,7 @@ public class Assignment1Test {
         // test if setInt gives error after offset 396 (BLOCK_SIZE - INT_SIZE)
         Date someDateValue = new Date(1586876490);
         int offset = 0;
-        Page p1 = new Page();
+        UpdatedPage p1 = new UpdatedPage();
         p1.read(blk);
 
         // When
@@ -162,7 +167,7 @@ public class Assignment1Test {
         // test if setInt gives error after offset 392 (BLOCK_SIZE - LONG_SIZE)
         Date someDateValue = new Date();
         int offset = 400;
-        Page p1 = new Page();
+        UpdatedPage p1 = new UpdatedPage();
         p1.read(blk);
 
         // When

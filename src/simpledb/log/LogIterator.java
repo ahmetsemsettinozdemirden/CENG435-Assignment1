@@ -1,6 +1,6 @@
 package simpledb.log;
 
-import static simpledb.file.Page.INT_SIZE;
+import static simpledb.file.UpdatedPage.INT_SIZE;
 import simpledb.file.*;
 import java.util.Iterator;
 
@@ -12,7 +12,7 @@ import java.util.Iterator;
  */
 class LogIterator implements Iterator<BasicLogRecord> {
    private Block blk;
-   private Page pg = new Page();
+   private UpdatedPage pg = new UpdatedPage();
    private int currentrec;
    
    /**

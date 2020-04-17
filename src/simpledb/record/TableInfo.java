@@ -1,7 +1,7 @@
 package simpledb.record;
 
 import static java.sql.Types.INTEGER;
-import static simpledb.file.Page.*;
+import static simpledb.file.UpdatedPage.*;
 import java.util.*;
 
 /**

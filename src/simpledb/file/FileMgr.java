@@ -1,6 +1,6 @@
 package simpledb.file;
 
-import static simpledb.file.Page.BLOCK_SIZE;
+import static simpledb.file.UpdatedPage.BLOCK_SIZE;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -13,7 +13,7 @@ import java.util.*;
  * a file block to a Java byte buffer,
  * writing the contents of a byte buffer to a file block,
  * and appending the contents of a byte buffer to the end of a file.
- * These methods are called exclusively by the class {@link simpledb.file.Page Page},
+ * These methods are called exclusively by the class {@link simpledb.file.UpdatedPage Page},
  * and are thus package-private.
  * The class also contains two public methods:
  * Method {@link #isNew() isNew} is called during system initialization by {@link simpledb.server.SimpleDB#init}.

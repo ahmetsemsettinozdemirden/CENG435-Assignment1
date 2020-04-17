@@ -1,7 +1,7 @@
 package simpledb.index.btree;
 
 import static java.sql.Types.INTEGER;
-import static simpledb.file.Page.*;
+import static simpledb.file.UpdatedPage.*;
 import simpledb.file.Block;
 import simpledb.record.*;
 import simpledb.query.*;
