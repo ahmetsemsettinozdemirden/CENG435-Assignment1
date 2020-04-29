@@ -1,4 +1,15 @@
+/*
+ * Mehmet Arda Aksoydan - 230201029
+ * Ahmet Þemsettin Özdemirden - 230201043
+ */
+
 package simpledb.buffer;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 import simpledb.file.*;
 
@@ -8,12 +19,11 @@ import simpledb.file.*;
  *
  */
 class BasicBufferMgr {
-   private Buffer[] bufferpool;
-   private int numAvailable;
+   private Queue<Buffer> unpinnedBuffers;
+   private Map<Block, Buffer> allocatedBuffers;
    
    /**
-    * Creates a buffer manager having the specified number 
-    * of buffer slots.
+    * Creates a buffer manager.
     * This constructor depends on both the {@link FileMgr} and
     * {@link simpledb.log.LogMgr LogMgr} objects 
     * that it gets from the class
@@ -22,23 +32,37 @@ class BasicBufferMgr {
     * Thus this constructor cannot be called until 
     * {@link simpledb.server.SimpleDB#initFileAndLogMgr(String)} or
     * is called first.
-    * @param numbuffs the number of buffer slots to allocate
     */
-   BasicBufferMgr(int numbuffs) {
-      bufferpool = new Buffer[numbuffs];
-      numAvailable = numbuffs;
-      for (int i=0; i<numbuffs; i++)
-         bufferpool[i] = new Buffer();
+   BasicBufferMgr() {
+	   this.unpinnedBuffers = new LinkedList<Buffer>();
+	   this.allocatedBuffers = new HashMap<Block, Buffer>();
    }
    
    /**
+    * Returns unpinned buffers queue with current data.
+    */
+   public Queue<Buffer> getUnpinnedBuffers() {
+	   return unpinnedBuffers;
+   }
+   
+   /**
+    * Returns allocated buffers map with current data.
+    */
+   public Map<Block, Buffer> getAllocatedBuffers() {
+	   return allocatedBuffers;
+   }
+
+/**
     * Flushes the dirty buffers modified by the specified transaction.
     * @param txnum the transaction's id number
     */
    synchronized void flushAll(int txnum) {
-      for (Buffer buff : bufferpool)
-         if (buff.isModifiedBy(txnum))
-         buff.flush();
+	   Set<Map.Entry<Block, Buffer>> viewMap = this.allocatedBuffers.entrySet();
+		 
+	   for (Map.Entry<Block, Buffer> me : viewMap) {
+			  Buffer buffer = me.getValue();
+			  if (buffer.isModifiedBy(txnum)){ buffer.flush(); }
+	   }	  
    }
    
    /**
@@ -46,22 +70,27 @@ class BasicBufferMgr {
     * If there is already a buffer assigned to that block
     * then that buffer is used;  
     * otherwise, an unpinned buffer from the pool is chosen.
-    * Returns a null value if there are no available buffers.
+    * Creates a new buffer if unpinned buffer queue is empty.
     * @param blk a reference to a disk block
     * @return the pinned buffer
     */
    synchronized Buffer pin(Block blk) {
-      Buffer buff = findExistingBuffer(blk);
-      if (buff == null) {
-         buff = chooseUnpinnedBuffer();
-         if (buff == null)
-            return null;
-         buff.assignToBlock(blk);
+      Buffer buffer = findExistingBuffer(blk);
+      if (buffer == null) {
+         buffer = chooseUnpinnedBuffer();
+         if (buffer == null) {
+            buffer = new Buffer(blk.number());
+            buffer.assignToBlock(blk);
+            this.allocatedBuffers.put(blk, buffer);
+         }else {
+        	 this.allocatedBuffers.remove(buffer.block());
+        	 buffer.assignToBlock(blk);
+        	 this.allocatedBuffers.put(blk, buffer);	 
+         }
       }
-      if (!buff.isPinned())
-         numAvailable--;
-      buff.pin();
-      return buff;
+      if(!buffer.isPinned())
+    	  buffer.pin();
+      return buffer;
    }
    
    /**
@@ -78,42 +107,48 @@ class BasicBufferMgr {
       if (buff == null)
          return null;
       buff.assignToNew(filename, fmtr);
-      numAvailable--;
       buff.pin();
       return buff;
    }
    
    /**
-    * Unpins the specified buffer.
+    * Unpins the specified buffer and adds to unpinned buffers queue.
     * @param buff the buffer to be unpinned
     */
    synchronized void unpin(Buffer buff) {
-      buff.unpin();
-      if (!buff.isPinned())
-         numAvailable++;
+	   if(buff.isPinned()) {
+		   buff.unpin();
+		   this.unpinnedBuffers.add(buff);
+	   }
    }
    
    /**
-    * Returns the number of available (i.e. unpinned) buffers.
-    * @return the number of available buffers
+    * Returns existing buffer with given block value if it exists.
+    * @param blk
     */
-   int available() {
-      return numAvailable;
-   }
-   
    private Buffer findExistingBuffer(Block blk) {
-      for (Buffer buff : bufferpool) {
-         Block b = buff.block();
-         if (b != null && b.equals(blk))
-            return buff;
-      }
-      return null;
+	  Buffer existingBuffer = this.allocatedBuffers.get(blk);
+	  
+	  return existingBuffer;
    }
    
+   /**
+    * Returns the head of unpinned buffer queue after its removal from queue.
+    */
    private Buffer chooseUnpinnedBuffer() {
-      for (Buffer buff : bufferpool)
-         if (!buff.isPinned())
-         return buff;
-      return null;
+      Buffer replacementBuffer = null;
+      if(this.unpinnedBuffers.size() > 0)  
+    	  replacementBuffer = this.unpinnedBuffers.remove();
+      
+      return replacementBuffer;
+   }
+   
+   /**
+    * Old method that checks available unpinned buffers in array, but since 
+    * our map and queue is limitless, it will always be available for new buffers.
+    * @return true
+    */
+   public int available() {
+	   return 1;
    }
 }
