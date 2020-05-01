@@ -1,3 +1,8 @@
+/*
+ * Mehmet Arda Aksoydan - 230201029
+ * Ahmet Þemsettin Özdemirden - 230201043
+ */
+
 package simpledb.buffer;
 
 import simpledb.server.SimpleDB;
@@ -19,12 +24,11 @@ public class Buffer {
    private int pins = 0;
    private int modifiedBy = -1;  // negative means not modified
    private int logSequenceNumber = -1; // negative means no corresponding log record
-
+   private int id; //attribute that has unique value for every buffer
+   
    /**
     * Creates a new buffer, wrapping a new 
     * {@link simpledb.file.UpdatedPage page}.  
-    * This constructor is called exclusively by the 
-    * class {@link BasicBufferMgr}.   
     * It depends on  the 
     * {@link simpledb.log.LogMgr LogMgr} object 
     * that it gets from the class
@@ -33,8 +37,9 @@ public class Buffer {
     * Thus this constructor cannot be called until 
     * {@link simpledb.server.SimpleDB#initFileAndLogMgr(String)} or
     * is called first.
+    * @param id the buffer's id number
     */
-   public Buffer() {}
+   public Buffer(int id) {this.id = id;}
    
    /**
     * Returns the integer value at the specified offset of the
@@ -58,6 +63,13 @@ public class Buffer {
     */
    public String getString(int offset) {
       return contents.getString(offset);
+   }
+   
+   /**
+    * Returns the id value of buffer.
+    */
+   public int getId() {
+	   return this.id;
    }
 
    /**
@@ -187,4 +199,13 @@ public class Buffer {
       blk = contents.append(filename);
       pins = 0;
    }
+   
+   /**
+    * Returns id value of buffer for print statements.
+    */
+   @Override
+	public String toString() {
+		return "" + this.id + "";
+   }
+   
 }

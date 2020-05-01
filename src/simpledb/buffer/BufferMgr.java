@@ -1,4 +1,12 @@
+/*
+ * Mehmet Arda Aksoydan - 230201029
+ * Ahmet Þemsettin Özdemirden - 230201043
+ */
+
 package simpledb.buffer;
+
+import java.util.Map;
+import java.util.Set;
 
 import simpledb.file.*;
 
@@ -36,7 +44,7 @@ public class BufferMgr {
     * @param numbuffers the number of buffer slots to allocate
     */
    public BufferMgr(int numbuffers) {
-      bufferMgr = new BasicBufferMgr(numbuffers);
+      bufferMgr = new BasicBufferMgr();
    }
    
    /**
@@ -120,5 +128,24 @@ public class BufferMgr {
    
    private boolean waitingTooLong(long starttime) {
       return System.currentTimeMillis() - starttime > MAX_TIME;
+   }
+   
+   /**
+    *Prints out desired information about buffers in terminal.
+    */
+   public void printStatus() {
+	   Set<Map.Entry<Block, Buffer>> viewMap = this.bufferMgr.getAllocatedBuffers().entrySet();
+	   
+	   System.out.println("Allocated Buffers:");
+	   for (Map.Entry<Block, Buffer> me : viewMap) {
+		   Buffer buffer = me.getValue();
+		   if(buffer.isPinned()) {
+			   System.out.println("Buffer " + buffer.getId() + ":  " + me.getKey() + " pinned");
+		   }else {
+			   System.out.println("Buffer " + buffer.getId() + ":  " + me.getKey() + " unpinned");
+		   }
+	   }
+	   
+	   System.out.println("Unpinned Buffers in LRU order: " + this.bufferMgr.getUnpinnedBuffers());
    }
 }
