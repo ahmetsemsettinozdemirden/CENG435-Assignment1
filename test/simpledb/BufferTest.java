@@ -14,7 +14,7 @@ public class BufferTest {
 	   
 	   public static void main(String args[]) throws Exception {
 		  SimpleDB.init("studentdb");
-		  bm = SimpleDB.bufferMgr();  
+		  bm = SimpleDB.bufferMgr();
 		  pinBuffer(0); pinBuffer(1); pinBuffer(2); pinBuffer(3);
 	      pinBuffer(4); pinBuffer(5); pinBuffer(6); pinBuffer(7);
 	      bm.printStatus();

@@ -145,7 +145,7 @@ class BasicBufferMgr {
    
    /**
     * Old method that checks available unpinned buffers in array, but since 
-    * our map and queue is limitless, it will always be available for new buffers.
+    * our map and queue is limitless, it is always available for new buffers.
     * @return true
     */
    public int available() {
