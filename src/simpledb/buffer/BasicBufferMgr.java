@@ -21,6 +21,7 @@ import simpledb.file.*;
 class BasicBufferMgr {
    private Queue<Buffer> unpinnedBuffers;
    private Map<Block, Buffer> allocatedBuffers;
+   private int numAvailable;
    
    /**
     * Creates a buffer manager.
@@ -36,6 +37,7 @@ class BasicBufferMgr {
    BasicBufferMgr() {
 	   this.unpinnedBuffers = new LinkedList<Buffer>();
 	   this.allocatedBuffers = new HashMap<Block, Buffer>();
+	   this.numAvailable = 8;
    }
    
    /**
@@ -88,8 +90,10 @@ class BasicBufferMgr {
         	 this.allocatedBuffers.put(blk, buffer);	 
          }
       }
-      if(!buffer.isPinned())
+      if(!buffer.isPinned()) {
     	  buffer.pin();
+    	  this.numAvailable--;
+      }  
       return buffer;
    }
    
@@ -118,8 +122,17 @@ class BasicBufferMgr {
    synchronized void unpin(Buffer buff) {
 	   if(buff.isPinned()) {
 		   buff.unpin();
+		   this.numAvailable++;
 		   this.unpinnedBuffers.add(buff);
 	   }
+   }
+   
+   /**
+    * Returns the number of available (i.e. unpinned) buffers.
+    * @return the number of available buffers
+    */
+   int available() {
+      return numAvailable;
    }
    
    /**
@@ -143,12 +156,4 @@ class BasicBufferMgr {
       return replacementBuffer;
    }
    
-   /**
-    * Old method that checks available unpinned buffers in array, but since 
-    * our map and queue is limitless, it is always available for new buffers.
-    * @return true
-    */
-   public int available() {
-	   return 1;
-   }
 }
