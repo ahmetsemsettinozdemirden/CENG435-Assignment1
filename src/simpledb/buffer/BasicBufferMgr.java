@@ -78,7 +78,7 @@ class BasicBufferMgr {
     */
    synchronized Buffer pin(Block blk) {
       Buffer buffer = findExistingBuffer(blk);
-      if (buffer == null) {
+      if (buffer == null || !buffer.isPinned()) {
          buffer = chooseUnpinnedBuffer();
          if (buffer == null) {
             buffer = new Buffer(blk.number());
@@ -120,7 +120,7 @@ class BasicBufferMgr {
     * @param buff the buffer to be unpinned
     */
    synchronized void unpin(Buffer buff) {
-	   if(buff.isPinned()) {
+	   if(buff != null && buff.isPinned()) {
 		   buff.unpin();
 		   this.numAvailable++;
 		   this.unpinnedBuffers.add(buff);

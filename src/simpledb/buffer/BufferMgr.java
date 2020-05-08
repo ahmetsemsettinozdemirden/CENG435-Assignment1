@@ -105,9 +105,11 @@ public class BufferMgr {
     * @param buff the buffer to be unpinned
     */
    public synchronized void unpin(Buffer buff) {
-      bufferMgr.unpin(buff);
-      if (!buff.isPinned())
-         notifyAll();
+	  if(buff != null) {
+		  bufferMgr.unpin(buff);
+      		if (!buff.isPinned())
+      			notifyAll();
+	  }
    }
    
    /**
